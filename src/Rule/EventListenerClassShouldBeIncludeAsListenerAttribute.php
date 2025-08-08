@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * @implements Rule<Class_>
@@ -60,7 +61,8 @@ final class EventListenerClassShouldBeIncludeAsListenerAttribute implements Rule
 
         if ($find === false) {
             return [
-                'Event listener class should be include attribute #[AsEventListener]',
+                RuleErrorBuilder::message('Event listener class should be include attribute #[AsEventListener]')->build(
+                ),
             ];
         }
 

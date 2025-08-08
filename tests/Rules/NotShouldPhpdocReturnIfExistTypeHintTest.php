@@ -8,6 +8,7 @@ use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TypeParser;
+use PHPStan\PhpDocParser\ParserConfig;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use Simtel\PHPStanRules\Rule\NotShouldPhpdocReturnIfExistTypeHint;
@@ -20,10 +21,12 @@ class NotShouldPhpdocReturnIfExistTypeHintTest extends RuleTestCase
      */
     public function getRule(): Rule
     {
+        $config = new ParserConfig(usedAttributes: []);
+        $constExprParser = new ConstExprParser($config);
         return new NotShouldPhpdocReturnIfExistTypeHint(
             $this->createReflectionProvider(),
-            new PhpDocParser(new TypeParser(), new ConstExprParser()),
-            new Lexer()
+            new PhpDocParser($config, new TypeParser($config, $constExprParser), $constExprParser),
+            new Lexer($config)
         );
     }
 

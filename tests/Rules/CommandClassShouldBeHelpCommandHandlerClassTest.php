@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Simtel\PHPStanRules\Tests\Rules;
 
 use Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass;
@@ -10,6 +11,7 @@ use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
+use PHPStan\PhpDocParser\ParserConfig;
 
 class CommandClassShouldBeHelpCommandHandlerClassTest extends RuleTestCase
 {
@@ -19,9 +21,11 @@ class CommandClassShouldBeHelpCommandHandlerClassTest extends RuleTestCase
      */
     protected function getRule(): Rule
     {
+        $config = new ParserConfig(usedAttributes: []);
+        $constExprParser = new ConstExprParser($config);
         return new CommandClassShouldBeHelpCommandHandlerClass(
-            new PhpDocParser(new TypeParser(), new ConstExprParser()),
-            new Lexer()
+            new PhpDocParser($config, new TypeParser($config, $constExprParser), $constExprParser),
+            new Lexer($config)
         );
     }
 
