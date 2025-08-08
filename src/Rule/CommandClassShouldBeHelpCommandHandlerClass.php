@@ -12,6 +12,7 @@ use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * @implements Rule<Class_>
@@ -57,7 +58,7 @@ final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
         $find = false;
         $doc = $node->getDocComment()?->getText() ?? '';
         if ($doc === '') {
-            return ['Command class should be include phpDoc with @see attribute'];
+            return [RuleErrorBuilder::message('Command class should be include phpDoc with @see attribute')->build()];
         }
         $tokens = new TokenIterator($this->phpDocLexer->tokenize($doc));
         $text = $this->parser->parse($tokens);
@@ -71,17 +72,21 @@ final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
                 $value = $tag->value->value;
                 if (!str_ends_with($value, 'CommandHandler')) {
                     return [
-                        sprintf(
-                            'PhpDoc command class should be include @see attribute with CommandHandler class name, but include %s',
-                            $value
-                        ),
+                        RuleErrorBuilder::message(
+                            sprintf(
+                                'PhpDoc command class should be include @see attribute with CommandHandler class name, but include %s',
+                                $value
+                            )
+                        )->build(),
                     ];
                 }
             }
         }
         if ($find === false) {
             return [
-                'PhpDoc command class should be include @see attribute with CommandHandler class name',
+                RuleErrorBuilder::message(
+                    'PhpDoc command class should be include @see attribute with CommandHandler class name'
+                )->build(),
             ];
         }
 
