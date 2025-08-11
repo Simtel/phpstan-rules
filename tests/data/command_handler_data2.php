@@ -9,5 +9,4 @@ namespace data;
  */
 class TestClassCommand
 {
-
 }

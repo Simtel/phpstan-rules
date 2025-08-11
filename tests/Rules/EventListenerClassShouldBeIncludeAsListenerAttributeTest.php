@@ -10,7 +10,6 @@ use Simtel\PHPStanRules\Rule\EventListenerClassShouldBeIncludeAsListenerAttribut
 
 class EventListenerClassShouldBeIncludeAsListenerAttributeTest extends RuleTestCase
 {
-
     /**
      * @inheritDoc
      */
@@ -27,11 +26,7 @@ class EventListenerClassShouldBeIncludeAsListenerAttributeTest extends RuleTestC
     public function testExistsAttribute(): void
     {
         $this->analyse([__DIR__ . '/../Fixture/EventListener/TestNotCorrectClassEventListener.php'], [
-            [
-                'Event listener class should be include attribute #[AsEventListener]',
-                7
-            ]
+            ['Event listener class should be include attribute #[AsEventListener]', 7]
         ]);
     }
-
 }
