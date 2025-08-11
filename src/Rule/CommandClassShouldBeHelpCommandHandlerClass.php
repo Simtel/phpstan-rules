@@ -19,7 +19,6 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
 {
-
     public function __construct(
         private readonly PhpDocParser $parser,
         private readonly Lexer $phpDocLexer,
@@ -44,7 +43,7 @@ final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
             $className = $node->name->name;
         }
 
-        if (!str_ends_with($className, 'Command')) {
+        if (! str_ends_with($className, 'Command')) {
             return [];
         }
 
@@ -70,7 +69,7 @@ final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
             if ($tag->value instanceof GenericTagValueNode) {
                 $find = true;
                 $value = $tag->value->value;
-                if (!str_ends_with($value, 'CommandHandler')) {
+                if (! str_ends_with($value, 'CommandHandler')) {
                     return [
                         RuleErrorBuilder::message(
                             sprintf(
@@ -92,5 +91,4 @@ final class CommandClassShouldBeHelpCommandHandlerClass implements Rule
 
         return [];
     }
-
 }

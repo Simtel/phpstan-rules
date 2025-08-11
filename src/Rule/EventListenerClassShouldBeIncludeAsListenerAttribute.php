@@ -16,9 +16,9 @@ use PHPStan\Rules\RuleErrorBuilder;
  */
 final class EventListenerClassShouldBeIncludeAsListenerAttribute implements Rule
 {
-
-    public function __construct(private readonly ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        private readonly ReflectionProvider $reflectionProvider
+    ) {
     }
 
     public function getNodeType(): string
@@ -39,7 +39,7 @@ final class EventListenerClassShouldBeIncludeAsListenerAttribute implements Rule
             $className = $node->name->name;
         }
 
-        if (!str_ends_with($className, 'EventListener')) {
+        if (! str_ends_with($className, 'EventListener')) {
             return [];
         }
 
@@ -61,8 +61,9 @@ final class EventListenerClassShouldBeIncludeAsListenerAttribute implements Rule
 
         if ($find === false) {
             return [
-                RuleErrorBuilder::message('Event listener class should be include attribute #[AsEventListener]')->build(
-                ),
+                RuleErrorBuilder::message(
+                    'Event listener class should be include attribute #[AsEventListener]'
+                )->build(),
             ];
         }
 

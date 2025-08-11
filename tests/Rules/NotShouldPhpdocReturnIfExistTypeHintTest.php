@@ -15,7 +15,6 @@ use Simtel\PHPStanRules\Rule\NotShouldPhpdocReturnIfExistTypeHint;
 
 class NotShouldPhpdocReturnIfExistTypeHintTest extends RuleTestCase
 {
-
     /**
      * @inheritDoc
      */
@@ -33,14 +32,8 @@ class NotShouldPhpdocReturnIfExistTypeHintTest extends RuleTestCase
     public function testWithError(): void
     {
         $this->analyse([__DIR__ . '/../Fixture/Return/MethodsWithTypeHintAndReturn.php'], [
-            [
-                'PhpDoc attribute @return for method someMethod can be remove',
-                12
-            ],
-            [
-                'PhpDoc attribute @return for method getInt can be remove',
-                20
-            ],
+            ['PhpDoc attribute @return for method someMethod can be remove', 12],
+            ['PhpDoc attribute @return for method getInt can be remove', 20],
         ]);
     }
 }

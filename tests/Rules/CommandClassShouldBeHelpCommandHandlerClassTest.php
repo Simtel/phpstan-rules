@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Simtel\PHPStanRules\Tests\Rules;
 
-use Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass;
 use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TypeParser;
+use PHPStan\PhpDocParser\ParserConfig;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use PHPStan\PhpDocParser\ParserConfig;
+use Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass;
 
 class CommandClassShouldBeHelpCommandHandlerClassTest extends RuleTestCase
 {
-
     /**
      * @inheritDoc
      */
@@ -42,20 +41,14 @@ class CommandClassShouldBeHelpCommandHandlerClassTest extends RuleTestCase
     public function testExistsSeeAttribute(): void
     {
         $this->analyse([__DIR__ . '/../data/command_handler_data2.php'], [
-            [
-                'PhpDoc command class should be include @see attribute with CommandHandler class name',
-                10
-            ]
+            ['PhpDoc command class should be include @see attribute with CommandHandler class name', 10]
         ]);
     }
 
     public function testExistsPhpDoc(): void
     {
         $this->analyse([__DIR__ . '/../data/command_handler_data3.php'], [
-            [
-                'Command class should be include phpDoc with @see attribute',
-                7
-            ]
+            ['Command class should be include phpDoc with @see attribute', 7]
         ]);
     }
 

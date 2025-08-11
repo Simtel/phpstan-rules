@@ -13,14 +13,12 @@ use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\ShouldNotHappenException;
 
 /**
  * @implements Rule<Class_>
  */
 final class NotShouldPhpdocReturnIfExistTypeHint implements Rule
 {
-
     public function __construct(
         private readonly ReflectionProvider $reflectionProvider,
         private readonly PhpDocParser $parser,
@@ -33,9 +31,6 @@ final class NotShouldPhpdocReturnIfExistTypeHint implements Rule
         return Class_::class;
     }
 
-    /**
-     * @throws ShouldNotHappenException
-     */
     public function processNode(Node $node, Scope $scope): array
     {
         $fullyQualifiedClassName = $node->namespacedName?->toString();
@@ -54,14 +49,13 @@ final class NotShouldPhpdocReturnIfExistTypeHint implements Rule
                 continue;
             }
 
-            $doc = (string)$method->getDocComment();
+            $doc = (string) $method->getDocComment();
             if ($doc === '') {
                 continue;
             }
 
-
             $returnType = $method->getReturnType();
-            if ($returnType === null || !method_exists($returnType, 'getName')) {
+            if ($returnType === null || ! method_exists($returnType, 'getName')) {
                 return [];
             }
 
@@ -76,10 +70,13 @@ final class NotShouldPhpdocReturnIfExistTypeHint implements Rule
                 if ($tag->value instanceof ReturnTagValueNode) {
                     $value = $tag->value->type->name;
                     if ($value === $returnTypeName
-                        && $reflection->getName() === $method->getBetterReflection()->getLocatedSource()->getName()) {
+                        && $reflection->getName() === $method->getBetterReflection()
+                            ->getLocatedSource()
+                            ->getName()) {
                         $errors[] = \PHPStan\Rules\RuleErrorBuilder::message(
                             'PhpDoc attribute @return for method ' . $method->getName() . ' can be remove'
-                        )->line((int)$method->getStartLine())->build();
+                        )->line((int) $method->getStartLine())
+                            ->build();
                     }
                 }
             }
