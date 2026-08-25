@@ -11,7 +11,7 @@ A collection of custom PHPStan rules that enforce coding standards and improve c
 This package includes three powerful rules that help maintain high code quality:
 
 ### 1. Command-Handler Relationship Rule
-**Rule**: `CommandClassShouldBeHelpCommandHandlerClass`
+**Rule**: `CommandClassShouldHaveCommandHandlerSeeTag`
 
 Enforces that classes ending with "Command" must have a `@see` PHPDoc tag pointing to their corresponding CommandHandler class.
 
@@ -29,7 +29,7 @@ class CreateUserCommand
 **Exception**: Classes with an `__invoke` method are exempt from this rule.
 
 ### 2. Event Listener Attribute Rule
-**Rule**: `EventListenerClassShouldBeIncludeAsListenerAttribute`
+**Rule**: `EventListenerShouldHaveAsEventListenerAttribute`
 
 Ensures that classes ending with "EventListener" are properly annotated with the `#[AsEventListener]` attribute.
 
@@ -45,7 +45,7 @@ class UserRegisteredEventListener
 ```
 
 ### 3. Redundant PHPDoc Return Type Rule
-**Rule**: `NotShouldPhpdocReturnIfExistTypeHint`
+**Rule**: `ShouldNotPhpDocReturnWhenTypeHintExists`
 
 Prevents redundant or conflicting `@return` PHPDoc annotations when native return type hints are already declared.
 
@@ -102,9 +102,9 @@ For granular control, register specific rules:
 ```neon
 parameters:
     rules:
-        - Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass
-        - Simtel\PHPStanRules\Rule\EventListenerClassShouldBeIncludeAsListenerAttribute
-        - Simtel\PHPStanRules\Rule\NotShouldPhpdocReturnIfExistTypeHint
+        - Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
+        - Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
+        - Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists
 ```
 
 ### Complete Configuration Example
@@ -123,6 +123,9 @@ parameters:
         # Exclude specific patterns if needed
         - '#Command class should be include phpDoc with @see attribute#'
           path: src/Deprecated/
+        # Rules now report error identifiers, e.g.:
+        # - identifier: commandClass.missingPhpDoc
+        #   path: src/Deprecated/
 ```
 
 ## 🔧 Development
@@ -171,9 +174,10 @@ vendor/bin/phpstan analyse
 ```
 .
 ├── src/Rule/                          # Rule implementations
-│   ├── CommandClassShouldBeHelpCommandHandlerClass.php
-│   ├── EventListenerClassShouldBeIncludeAsListenerAttribute.php
-│   └── NotShouldPhpdocReturnIfExistTypeHint.php
+│   ├── CommandClassShouldHaveCommandHandlerSeeTag.php
+│   ├── EventListenerShouldHaveAsEventListenerAttribute.php
+│   ├── ShouldNotPhpDocReturnWhenTypeHintExists.php
+│   └── AbstractPhpDocRule.php         # Shared PHPDoc parsing base
 ├── tests/
 │   ├── Fixture/                        # Test code samples
 │   │   ├── EventListener/

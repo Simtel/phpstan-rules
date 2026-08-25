@@ -1,4 +1,4 @@
 rules:
-    - Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass
-    - Simtel\PHPStanRules\Rule\EventListenerClassShouldBeIncludeAsListenerAttribute
-    - Simtel\PHPStanRules\Rule\NotShouldPhpdocReturnIfExistTypeHint
+    - Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
+    - Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
+    - Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists
