@@ -1,7 +1,9 @@
 rules:
-    - Simtel\PHPStanRules\Rule\CommandClassShouldBeHelpCommandHandlerClass
+    - Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
+    - Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
+    - Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists
 parameters:
     paths:
-        - src\Examples
+        - src
     level: max
 
