@@ -5,43 +5,54 @@ declare(strict_types=1);
 namespace Simtel\PHPStanRules\Rule;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\InClassNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
+use PHPStan\PhpDocParser\Lexer\Lexer;
+use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * @implements Rule<Class_>
+ * @implements Rule<InClassNode>
  */
 final class CommandClassShouldHaveCommandHandlerSeeTag extends AbstractPhpDocRule implements Rule
 {
+    public function __construct(
+        PhpDocParser $phpDocParser,
+        Lexer $phpDocLexer,
+        private readonly string $commandSuffix = 'Command',
+        private readonly string $commandHandlerSuffix = 'CommandHandler',
+    ) {
+        parent::__construct($phpDocParser, $phpDocLexer);
+    }
+
     public function getNodeType(): string
     {
-        return Class_::class;
+        return InClassNode::class;
     }
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if ($node->name === null) {
+        $classReflection = $node->getClassReflection();
+        if (! $classReflection->isClass()) {
             return [];
         }
 
-        if (! str_ends_with($node->name->name, 'Command')) {
+        if (! str_ends_with($classReflection->getDisplayName(), $this->commandSuffix)) {
             return [];
         }
 
-        foreach ($node->getMethods() as $method) {
-            if ($method->name->name === '__invoke') {
-                return [];
-            }
+        if ($classReflection->hasNativeMethod('__invoke')) {
+            return [];
         }
 
-        $doc = $node->getDocComment()?->getText() ?? '';
+        $doc = $node->getOriginalNode()
+            ->getDocComment()?->getText() ?? '';
         if ($doc === '') {
             return [
-                RuleErrorBuilder::message('Command class should be include phpDoc with @see attribute')
-                    ->identifier('commandClass.missingPhpDoc')
+                RuleErrorBuilder::message(RuleMessages::COMMAND_MISSING_PHP_DOC)
+                    ->identifier(RuleMessages::IDENTIFIER_COMMAND_MISSING_PHP_DOC)
                     ->build(),
             ];
         }
@@ -55,15 +66,16 @@ final class CommandClassShouldHaveCommandHandlerSeeTag extends AbstractPhpDocRul
                 continue;
             }
             $hasSeeTag = true;
-            if (! str_ends_with($tag->value->value, 'CommandHandler')) {
+            if (! str_ends_with($tag->value->value, $this->commandHandlerSuffix)) {
                 return [
                     RuleErrorBuilder::message(
                         sprintf(
-                            'PhpDoc command class should be include @see attribute with CommandHandler class name, but include %s',
+                            RuleMessages::COMMAND_INVALID_SEE_VALUE,
+                            $this->commandHandlerSuffix,
                             $tag->value->value
                         )
                     )
-                        ->identifier('commandClass.invalidSeeValue')
+                        ->identifier(RuleMessages::IDENTIFIER_COMMAND_INVALID_SEE_VALUE)
                         ->build(),
                 ];
             }
@@ -71,10 +83,8 @@ final class CommandClassShouldHaveCommandHandlerSeeTag extends AbstractPhpDocRul
 
         if (! $hasSeeTag) {
             return [
-                RuleErrorBuilder::message(
-                    'PhpDoc command class should be include @see attribute with CommandHandler class name'
-                )
-                    ->identifier('commandClass.missingSee')
+                RuleErrorBuilder::message(sprintf(RuleMessages::COMMAND_MISSING_SEE, $this->commandHandlerSuffix))
+                    ->identifier(RuleMessages::IDENTIFIER_COMMAND_MISSING_SEE)
                     ->build(),
             ];
         }

@@ -5,42 +5,49 @@ declare(strict_types=1);
 namespace Simtel\PHPStanRules\Rule;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\InClassNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * @implements Rule<Class_>
+ * @implements Rule<InClassNode>
  */
 final class EventListenerShouldHaveAsEventListenerAttribute implements Rule
 {
+    public function __construct(
+        private readonly string $eventListenerSuffix = 'EventListener',
+        private readonly string $asEventListenerSuffix = 'AsEventListener',
+    ) {
+    }
+
     public function getNodeType(): string
     {
-        return Class_::class;
+        return InClassNode::class;
     }
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if ($node->name === null) {
+        $classReflection = $node->getClassReflection();
+        if (! $classReflection->isClass()) {
             return [];
         }
 
-        if (! str_ends_with($node->name->name, 'EventListener')) {
+        if (! str_ends_with($classReflection->getDisplayName(), $this->eventListenerSuffix)) {
             return [];
         }
 
-        foreach ($node->attrGroups as $attrGroup) {
-            foreach ($attrGroup->attrs as $attribute) {
-                if (str_ends_with($attribute->name->toString(), 'AsEventListener')) {
-                    return [];
-                }
+        foreach ($classReflection->getAttributes() as $attribute) {
+            if (str_ends_with($attribute->getName(), $this->asEventListenerSuffix)) {
+                return [];
             }
         }
 
         return [
-            RuleErrorBuilder::message('Event listener class should be include attribute #[AsEventListener]')
-                ->identifier('eventListener.missingAttribute')
+            RuleErrorBuilder::message(
+                sprintf(RuleMessages::EVENT_LISTENER_MISSING_ATTRIBUTE, $this->asEventListenerSuffix)
+            )
+                ->identifier(RuleMessages::IDENTIFIER_EVENT_LISTENER_MISSING_ATTRIBUTE)
                 ->build(),
         ];
     }

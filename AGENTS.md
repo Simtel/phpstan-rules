@@ -12,9 +12,12 @@ Custom PHPStan rules package (`simtel/phpstan-rules`). Adds static-analysis rule
 ## Architecture
 
 - `AbstractPhpDocRule` (in `src/Rule/`) is the shared base for rules that parse PHPDoc: it injects `PhpDocParser` + `Lexer` and exposes `parsePhpDoc(string $doc): PhpDocNode`. Subclasses implement `Rule` themselves.
-- `EventListenerShouldHaveAsEventListenerAttribute` inspects `$node->attrGroups` directly (no reflection, no base class).
+- The two class-level rules target PHPStan's `InClassNode` (not `Class_`): at a raw `Class_` node the scope is the *outer* scope, so `$scope->getClassReflection()` would return the wrong class. Use `$node->getClassReflection()` (and `$node->getOriginalNode()` for the AST node).
+- `EventListenerShouldHaveAsEventListenerAttribute` reads attributes via `$classReflection->getAttributes()` (no base class, no manual `$node->attrGroups`).
 - `ShouldNotPhpDocReturnWhenTypeHintExists` works on `ClassMethod` nodes and reads the native type from `$node->returnType` (no reflection needed). Only `Identifier`/`Name` native types and `IdentifierTypeNode` PHPDoc types are compared — union/nullable/generic types are skipped, not errors.
-- Errors are reported via `RuleErrorBuilder::message(...)->identifier('rule.group')` (never throw). PHPStan 2.x requires identifiers.
+- `RuleMessages` holds all error message templates (with `%s` placeholders) and identifiers — rules and tests both reference these constants.
+- Class name suffixes (`Command`, `CommandHandler`, `EventListener`, `AsEventListener`) are constructor args with defaults; override them via `services:` with the `phpstan.rules.rule` tag.
+- Errors are reported via `RuleErrorBuilder::message(...)->identifier(RuleMessages::..._ID)` (never throw). PHPStan 2.x requires identifiers.
 
 ## Adding a rule
 

@@ -100,11 +100,33 @@ includes:
 For granular control, register specific rules:
 
 ```neon
-parameters:
-    rules:
-        - Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
-        - Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
-        - Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists
+rules:
+    - Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
+    - Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
+    - Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists
+```
+
+### Customizing class name suffixes
+
+The name suffixes the rules match on are configurable. Register a rule as a service
+and pass the suffix arguments (the PHPDoc parser/lexer are autowired):
+
+```neon
+services:
+    -
+        class: Simtel\PHPStanRules\Rule\CommandClassShouldHaveCommandHandlerSeeTag
+        arguments:
+            commandSuffix: 'Command'
+            commandHandlerSuffix: 'CommandHandler'
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute
+        arguments:
+            eventListenerSuffix: 'EventListener'
+            asEventListenerSuffix: 'AsEventListener'
+        tags:
+            - phpstan.rules.rule
 ```
 
 ### Complete Configuration Example

@@ -8,6 +8,7 @@ use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
+use Simtel\PHPStanRules\Rule\RuleMessages;
 use Simtel\PHPStanRules\Rule\ShouldNotPhpDocReturnWhenTypeHintExists;
 
 class ShouldNotPhpDocReturnWhenTypeHintExistsTest extends RuleTestCase
@@ -25,8 +26,8 @@ class ShouldNotPhpDocReturnWhenTypeHintExistsTest extends RuleTestCase
     public function testWithError(): void
     {
         $this->analyse([__DIR__ . '/../Fixture/Return/MethodsWithTypeHintAndReturn.php'], [
-            ['PhpDoc attribute @return for method someMethod can be remove', 12],
-            ['PhpDoc attribute @return for method getInt can be remove', 20],
+            [sprintf(RuleMessages::RETURN_REDUNDANT_PHP_DOC, 'someMethod'), 12],
+            [sprintf(RuleMessages::RETURN_REDUNDANT_PHP_DOC, 'getInt'), 20],
         ]);
     }
 
