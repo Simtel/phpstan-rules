@@ -51,11 +51,9 @@ final class ShouldNotPhpDocReturnWhenTypeHintExists extends AbstractPhpDocRule i
         foreach ($this->parsePhpDoc($doc)->getReturnTagValues() as $returnTag) {
             if ($returnTag->type instanceof IdentifierTypeNode && $returnTag->type->name === $nativeTypeName) {
                 return [
-                    RuleErrorBuilder::message(
-                        'PhpDoc attribute @return for method ' . $node->name->name . ' can be remove'
-                    )
+                    RuleErrorBuilder::message(sprintf(RuleMessages::RETURN_REDUNDANT_PHP_DOC, $node->name->name))
                         ->line($node->getStartLine())
-                        ->identifier('returnType.redundantPhpDoc')
+                        ->identifier(RuleMessages::IDENTIFIER_RETURN_REDUNDANT_PHP_DOC)
                         ->build(),
                 ];
             }

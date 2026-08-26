@@ -7,6 +7,7 @@ namespace Simtel\PHPStanRules\Tests\Rules;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use Simtel\PHPStanRules\Rule\EventListenerShouldHaveAsEventListenerAttribute;
+use Simtel\PHPStanRules\Rule\RuleMessages;
 
 class EventListenerShouldHaveAsEventListenerAttributeTest extends RuleTestCase
 {
@@ -23,7 +24,7 @@ class EventListenerShouldHaveAsEventListenerAttributeTest extends RuleTestCase
     public function testExistsAttribute(): void
     {
         $this->analyse([__DIR__ . '/../Fixture/EventListener/TestNotCorrectClassEventListener.php'], [
-            ['Event listener class should be include attribute #[AsEventListener]', 7],
+            [sprintf(RuleMessages::EVENT_LISTENER_MISSING_ATTRIBUTE, 'AsEventListener'), 7],
         ]);
     }
 }
